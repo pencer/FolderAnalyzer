@@ -67,22 +67,22 @@ namespace FolderAnalyzer
                 if (Path.GetFileName(web.FullName).ToUpper() == "EXPLORER.EXE")
                 {
                     string str = web.LocationURL;
-                    int cnt = listView1.Items.Find(str, false).Length;
-                    if (cnt > 0)
+                    ListViewItem obj = listView1.FindItemWithText(str);
+                    if (obj != null)
                     {
-
+                        label1.Text = "obj=" + obj.Text;
                     }
                     else
                     {
+                        string val = "1";
+                        string[] newitem = { str, val };
+                        listView1.Items.Add(new ListViewItem(newitem));
 
                     }
                     int idx = comboBox1.Items.IndexOf(str);
                     if (idx < 0)
                     {
                         comboBox1.Items.Insert(0, str);
-                        string val = "1";
-                        string[] newitem = { str, val };
-                        listView1.Items.Add(new ListViewItem(newitem));
                         paths += str;
                     }
                 }
@@ -90,12 +90,12 @@ namespace FolderAnalyzer
             if (!paths.Equals(m_curpaths))
             {
                 // update
-                label1.Text = "Updated";
+                label1.Text += "Updated";
                 m_curpaths = paths;
             }
             else
             {
-                label1.Text = "Skip";
+                label1.Text += "Skip";
 
             }
 
