@@ -25,9 +25,23 @@ namespace FolderAnalyzer
 
         private string m_curpaths; // currently opened paths in explorer windows
 
+        private Dictionary<string, int> m_dict = new Dictionary<string, int>();
+
+        private string setting_filename = "folder_log.txt";
+        
         public Form1()
         {
             InitializeComponent();
+        }
+
+        private void ListView1_initialize()
+        {
+            listView1.Clear();
+            listView1.View = View.Details;
+            listView1.Columns.Add("Path", 500);
+            listView1.Columns.Add("Value", 100);
+            listView1.FullRowSelect = true;
+            listView1.GridLines = true;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -36,18 +50,9 @@ namespace FolderAnalyzer
             m_timer.Interval = m_interval;
             m_timer.Enabled = true;
 
-            listView1.View = View.Details;
-            listView1.FullRowSelect = true;
-            listView1.GridLines = true;
+            LoadData(Application.UserAppDataPath + setting_filename);
 
-            ColumnHeader chpath = new ColumnHeader();
-            chpath.Text = "Path";
-            chpath.Width = 500;
-            ColumnHeader chval = new ColumnHeader();
-            chval.Text = "Value";
-            chval.Width = 100;
-            ColumnHeader[] charray = { chpath, chval };
-            listView1.Columns.AddRange(charray);
+            ListView1_initialize();
 
         }
 
@@ -56,7 +61,7 @@ namespace FolderAnalyzer
             m_elapsed += m_interval;
             label2.Text = m_elapsed.ToString();
 
-            label1.Text = "";
+            //label1.Text = "";
 
             string paths = "";
 
@@ -67,6 +72,16 @@ namespace FolderAnalyzer
                 if (Path.GetFileName(web.FullName).ToUpper() == "EXPLORER.EXE")
                 {
                     string str = web.LocationURL;
+                    if (m_dict.ContainsKey(str))
+                    {
+                        m_dict[str] += 1;
+                    }
+                    else
+                    {
+                        m_dict[str] = 1;
+                    }
+                    paths += str;
+                    /*
                     ListViewItem obj = listView1.FindItemWithText(str);
                     if (obj != null)
                     {
@@ -76,7 +91,7 @@ namespace FolderAnalyzer
                     {
                         string val = "1";
                         string[] newitem = { str, val };
-                        listView1.Items.Add(new ListViewItem(newitem));
+                        //listView1.Items.Add(new ListViewItem(newitem));
 
                     }
                     int idx = comboBox1.Items.IndexOf(str);
@@ -85,35 +100,34 @@ namespace FolderAnalyzer
                         comboBox1.Items.Insert(0, str);
                         paths += str;
                     }
+                    */
                 }
             }
             if (!paths.Equals(m_curpaths))
             {
                 // update
-                label1.Text += "Updated";
+                label1.Text = "Updated";
                 m_curpaths = paths;
+
+                ListView1_initialize();
+                IOrderedEnumerable<KeyValuePair<string, int>> sorted = m_dict.OrderByDescending(pair => pair.Value);
+                foreach (KeyValuePair<string, int> pair in sorted)
+                {
+                    string[] newitem = { pair.Key, pair.Value.ToString() };
+                    listView1.Items.Add(new ListViewItem(newitem));
+                }
             }
             else
             {
-                label1.Text += "Skip";
-
+                label1.Text = "Skip";
             }
 
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            label1.Text = "";
-
-            Shell shell = new Shell();
-            ShellWindows win = shell.Windows();
-            foreach (IWebBrowser2 web in win)
-            {
-                if (Path.GetFileName(web.FullName).ToUpper() == "EXPLORER.EXE")
-                {
-                    label1.Text += web.LocationURL + " : " + web.LocationName + "\n";
-                }
-            }
+            SaveData(Application.UserAppDataPath + setting_filename);
+            label1.Text = Application.UserAppDataPath;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -131,6 +145,38 @@ namespace FolderAnalyzer
             val++;
             listView1.SelectedItems[0].SubItems[1].Text = val.ToString();
             System.Diagnostics.Process.Start("EXPLORER.EXE", seltext);
+        }
+
+        private void SaveData(string filename)
+        {
+            StreamWriter sw = new StreamWriter(filename, false, Encoding.GetEncoding("Shift_JIS"));
+            IOrderedEnumerable<KeyValuePair<string, int>> sorted = m_dict.OrderByDescending(pair => pair.Value);
+            foreach (KeyValuePair<string, int> pair in sorted/*m_dict*/)
+            {
+                sw.WriteLine(pair.Key + "\t" + pair.Value/* + sw.NewLine*/);
+            }
+            sw.Close();
+        }
+
+        private void LoadData(string filename)
+        {
+            string line = "";
+
+            StreamReader sr = new StreamReader(filename, Encoding.GetEncoding("Shift_JIS"));
+
+            m_dict.Clear();
+            ListView1_initialize();
+
+            while ((line = sr.ReadLine()) != null)
+            {
+                string[] delimiter = { "\t" };
+                string[] sttmp = line.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
+                string key = sttmp[0];
+                int value = int.Parse(sttmp[1]);
+
+                m_dict[key] = value;
+            }
+            sr.Close();
         }
     }
 }
