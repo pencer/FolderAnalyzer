@@ -71,7 +71,7 @@ namespace FolderAnalyzer
                     string str = web.LocationURL;
                     if (m_dict.ContainsKey(str))
                     {
-                        m_dict[str] += 1;
+                        //m_dict[str] += 1;
                     }
                     else
                     {
@@ -122,6 +122,7 @@ namespace FolderAnalyzer
             string path = listView1.SelectedItems[0].SubItems[0].Text;
             int val = int.Parse(listView1.SelectedItems[0].SubItems[1].Text);
             val++;
+            m_dict[path]++;
             listView1.SelectedItems[0].SubItems[1].Text = val.ToString();
             System.Diagnostics.Process.Start("EXPLORER.EXE", path);
         }
@@ -170,6 +171,11 @@ namespace FolderAnalyzer
                 }
             }
             sr.Close();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveData(Application.UserAppDataPath + setting_filename);
         }
     }
 }

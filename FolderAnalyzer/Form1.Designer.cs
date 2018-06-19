@@ -41,7 +41,7 @@
             this.button1.Location = new System.Drawing.Point(733, 15);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(136, 32);
-            this.button1.TabIndex = 0;
+            this.button1.TabIndex = 3;
             this.button1.Text = "&Save";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -52,7 +52,7 @@
             this.label1.Location = new System.Drawing.Point(18, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(52, 18);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 0;
             this.label1.Text = "label1";
             // 
             // label2
@@ -85,7 +85,7 @@
             this.listView1.Location = new System.Drawing.Point(21, 55);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(973, 618);
-            this.listView1.TabIndex = 5;
+            this.listView1.TabIndex = 1;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
             // 
@@ -101,6 +101,7 @@
             this.Controls.Add(this.button1);
             this.Name = "Form1";
             this.Text = "FolderAnalyzer";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
