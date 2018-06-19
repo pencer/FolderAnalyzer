@@ -143,11 +143,19 @@ namespace FolderAnalyzer
         private void LoadData(string filename)
         {
             string line = "";
-
-            StreamReader sr = new StreamReader(filename, Encoding.GetEncoding("Shift_JIS"));
+            StreamReader sr;
 
             m_dict.Clear();
             ListView1_initialize();
+
+            try
+            {
+                sr = new StreamReader(filename, Encoding.GetEncoding("Shift_JIS"));
+            }
+            catch (System.IO.FileNotFoundException ex)
+            {
+                return;
+            }
 
             while ((line = sr.ReadLine()) != null)
             {
