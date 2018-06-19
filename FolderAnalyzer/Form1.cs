@@ -109,10 +109,15 @@ namespace FolderAnalyzer
 
         private void button2_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("EXPLORER.EXE", comboBox1.Text);
+            OpenExplorer();
         }
 
         private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            OpenExplorer();
+        }
+
+        private void OpenExplorer()
         {
             string path = listView1.SelectedItems[0].SubItems[0].Text;
             int val = int.Parse(listView1.SelectedItems[0].SubItems[1].Text);
