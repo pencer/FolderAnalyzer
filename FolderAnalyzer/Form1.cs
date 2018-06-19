@@ -53,15 +53,12 @@ namespace FolderAnalyzer
             LoadData(Application.UserAppDataPath + setting_filename);
 
             ListView1_initialize();
-
         }
 
         public void MyCallback(object sender, EventArgs e)
         {
             m_elapsed += m_interval;
             label2.Text = m_elapsed.ToString();
-
-            //label1.Text = "";
 
             string paths = "";
 
@@ -81,26 +78,6 @@ namespace FolderAnalyzer
                         m_dict[str] = 1;
                     }
                     paths += str;
-                    /*
-                    ListViewItem obj = listView1.FindItemWithText(str);
-                    if (obj != null)
-                    {
-                        label1.Text = "obj=" + obj.Text;
-                    }
-                    else
-                    {
-                        string val = "1";
-                        string[] newitem = { str, val };
-                        //listView1.Items.Add(new ListViewItem(newitem));
-
-                    }
-                    int idx = comboBox1.Items.IndexOf(str);
-                    if (idx < 0)
-                    {
-                        comboBox1.Items.Insert(0, str);
-                        paths += str;
-                    }
-                    */
                 }
             }
             if (!paths.Equals(m_curpaths))
@@ -137,14 +114,11 @@ namespace FolderAnalyzer
 
         private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            //ListViewItem target = (ListViewItem)sender;
-            string seltext = "";
-            //seltext = target.SubItems[0].Text;
-            seltext = listView1.SelectedItems[0].SubItems[0].Text;
+            string path = listView1.SelectedItems[0].SubItems[0].Text;
             int val = int.Parse(listView1.SelectedItems[0].SubItems[1].Text);
             val++;
             listView1.SelectedItems[0].SubItems[1].Text = val.ToString();
-            System.Diagnostics.Process.Start("EXPLORER.EXE", seltext);
+            System.Diagnostics.Process.Start("EXPLORER.EXE", path);
         }
 
         private void SaveData(string filename)
@@ -153,7 +127,10 @@ namespace FolderAnalyzer
             IOrderedEnumerable<KeyValuePair<string, int>> sorted = m_dict.OrderByDescending(pair => pair.Value);
             foreach (KeyValuePair<string, int> pair in sorted/*m_dict*/)
             {
-                sw.WriteLine(pair.Key + "\t" + pair.Value/* + sw.NewLine*/);
+                if (pair.Key.Length > 0)
+                {
+                    sw.WriteLine(pair.Key + "\t" + pair.Value/* + sw.NewLine*/);
+                }
             }
             sw.Close();
         }
@@ -173,8 +150,11 @@ namespace FolderAnalyzer
                 string[] sttmp = line.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
                 string key = sttmp[0];
                 int value = int.Parse(sttmp[1]);
+                if (key.Length > 0)
+                {
+                    m_dict[key] = value;
 
-                m_dict[key] = value;
+                }
             }
             sr.Close();
         }
