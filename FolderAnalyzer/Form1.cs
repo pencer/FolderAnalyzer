@@ -71,8 +71,7 @@ namespace FolderAnalyzer
             {
                 m_curPaths[key] = false; // once disable
             }
-
-
+            
             Shell shell = new Shell();
             ShellWindows win = shell.Windows();
             foreach (IWebBrowser2 web in win)
@@ -82,7 +81,7 @@ namespace FolderAnalyzer
                     string str = web.LocationURL;
                     if (m_dict.ContainsKey(str))
                     {
-                        if (m_curPaths.ContainsKey(str))
+                        if (!m_curPaths.ContainsKey(str))
                         {
                             m_dict[str] += 1;
                         }
