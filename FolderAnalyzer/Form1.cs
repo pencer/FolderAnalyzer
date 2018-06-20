@@ -37,10 +37,17 @@ namespace FolderAnalyzer
 
         private void ListView1_initialize()
         {
+            int colwidth0 = 500;
+            int colwidth1 = 100;
+            if (listView1.Columns.Count > 0)
+            {
+                colwidth0 = listView1.Columns[0].Width;
+                colwidth1 = listView1.Columns[1].Width;
+            }
             listView1.Clear();
             listView1.View = View.Details;
-            listView1.Columns.Add("Path", 500);
-            listView1.Columns.Add("Value", 100);
+            listView1.Columns.Add("Path", colwidth0);
+            listView1.Columns.Add("Value", colwidth1);
             listView1.FullRowSelect = true;
             listView1.GridLines = true;
         }
