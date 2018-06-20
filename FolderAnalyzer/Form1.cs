@@ -26,6 +26,7 @@ namespace FolderAnalyzer
         private string m_curpaths; // currently opened paths in explorer windows
 
         private Dictionary<string, int> m_dict = new Dictionary<string, int>();
+        private Dictionary<string, bool> m_curPaths = new Dictionary<string, bool>();
 
         private string setting_filename = "folder_log.txt";
         
@@ -53,6 +54,8 @@ namespace FolderAnalyzer
             LoadData(Application.UserAppDataPath + setting_filename);
 
             ListView1_initialize();
+
+            m_curPaths.Clear();
         }
 
         public void MyCallback(object sender, EventArgs e)
@@ -61,6 +64,14 @@ namespace FolderAnalyzer
             label2.Text = m_elapsed.ToString();
 
             string paths = "";
+
+            List<string> keylist = new List<string>(m_curPaths.Keys);
+
+            foreach (string key in keylist)
+            {
+                m_curPaths[key] = false; // once disable
+            }
+
 
             Shell shell = new Shell();
             ShellWindows win = shell.Windows();
@@ -71,12 +82,16 @@ namespace FolderAnalyzer
                     string str = web.LocationURL;
                     if (m_dict.ContainsKey(str))
                     {
-                        //m_dict[str] += 1;
+                        if (m_curPaths.ContainsKey(str))
+                        {
+                            m_dict[str] += 1;
+                        }
                     }
                     else
                     {
                         m_dict[str] = 1;
                     }
+                    m_curPaths[str] = true;
                     paths += str;
                 }
             }
@@ -92,6 +107,14 @@ namespace FolderAnalyzer
                 {
                     string[] newitem = { pair.Key, pair.Value.ToString() };
                     listView1.Items.Add(new ListViewItem(newitem));
+                }
+
+                foreach (string key in keylist)
+                {
+                    if (m_curPaths[key] == false)
+                    {
+                        m_curPaths.Remove(key);
+                    }
                 }
             }
             else
@@ -176,6 +199,11 @@ namespace FolderAnalyzer
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveData(Application.UserAppDataPath + setting_filename);
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
