@@ -74,6 +74,9 @@ namespace FolderAnalyzer
             ListView1_initialize();
 
             m_curPaths.Clear();
+
+            // Receive children's key event.
+            this.KeyPreview = true;
         }
 
         public void MyCallback(object sender, EventArgs e)
@@ -172,12 +175,15 @@ namespace FolderAnalyzer
 
         private void OpenExplorer()
         {
-            string path = listView1.SelectedItems[0].SubItems[0].Text;
-            int val = int.Parse(listView1.SelectedItems[0].SubItems[1].Text);
-            val++;
-            m_dict[path]++;
-            listView1.SelectedItems[0].SubItems[1].Text = val.ToString();
-            System.Diagnostics.Process.Start("EXPLORER.EXE", path);
+            if (listView1.SelectedItems.Count > 0)
+            {
+                string path = listView1.SelectedItems[0].SubItems[0].Text;
+                int val = int.Parse(listView1.SelectedItems[0].SubItems[1].Text);
+                val++;
+                m_dict[path]++;
+                listView1.SelectedItems[0].SubItems[1].Text = val.ToString();
+                System.Diagnostics.Process.Start("EXPLORER.EXE", path);
+            }
         }
 
         private void SaveData(string filename)
@@ -248,6 +254,59 @@ namespace FolderAnalyzer
         {
             lvsort.Column = e.Column;
             listView1.Sort();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            SearchString();
+        }
+
+        private void SearchString()
+        { 
+            string search_text = textBox1.Text;
+            bool found = false;
+            // Search Button
+            if (search_text.Length > 0)
+            {
+                foreach (KeyValuePair<string, int> kvp in m_dict)
+                {
+                    if (kvp.Key.Contains(search_text))
+                    {
+                        ListViewItem obj = listView1.FindItemWithText(kvp.Key);
+                        if (obj != null)
+                        {
+                            obj.Selected = true;
+                            label1.Text = search_text + " found.";
+                            found = true;
+                        }
+                    }
+                }
+            }
+            if (found)
+            {
+                listView1.Focus();
+            }
+            else
+            {
+                label1.Text = "Not found.";
+            }
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Return)
+            {
+                SearchString();
+            }
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ((e.KeyData == Keys.F3) || (e.KeyData == Keys.Divide))
+            {
+                label1.Text = "focused";
+                textBox1.Focus();
+            }
         }
     }
 
