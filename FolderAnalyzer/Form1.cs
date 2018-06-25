@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using Shell32;
 using SHDocVw;
 using System.IO;
+using System.Collections;
 
 namespace FolderAnalyzer
 {
@@ -29,7 +30,9 @@ namespace FolderAnalyzer
         private Dictionary<string, bool> m_curPaths = new Dictionary<string, bool>();
 
         private string setting_filename = "folder_log.txt";
-        
+
+        private ListViewSort lvsort;
+
         public Form1()
         {
             InitializeComponent();
@@ -50,6 +53,14 @@ namespace FolderAnalyzer
             listView1.Columns.Add("Value", colwidth1);
             listView1.FullRowSelect = true;
             listView1.GridLines = true;
+            lvsort = new ListViewSort();
+            lvsort.ColumnModes = new ListViewSort.ComparerMode[]
+            {
+                ListViewSort.ComparerMode.String,
+                ListViewSort.ComparerMode.Integer
+            };
+            listView1.ListViewItemSorter = lvsort;
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -231,6 +242,101 @@ namespace FolderAnalyzer
             {
                 OpenExplorer();
             }
+        }
+
+        private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            lvsort.Column = e.Column;
+            listView1.Sort();
+        }
+    }
+
+    // http://www.eonet.ne.jp/~maeda/cs/listsort.htm
+    internal class ListViewSort : IComparer
+    {
+        public enum ComparerMode
+        {
+            String, Integer, DateTime
+        };
+
+        private ComparerMode[] _columnModes;
+        private ComparerMode _mode;
+        private int _column;
+        private SortOrder _order;
+
+        public ComparerMode[] ColumnModes
+        {
+            set
+            {
+                _columnModes = value;
+            }
+        }
+
+        public int Column
+        {
+            set
+            {
+                if (_column == value)
+                {
+                    if (_order == SortOrder.Ascending)
+                        _order = SortOrder.Descending;
+                    else if (_order == SortOrder.Descending)
+                        _order = SortOrder.Ascending;
+                }
+                _column = value;
+            }
+            get
+            {
+                return _column;
+            }
+        }
+
+        public ListViewSort(int col, SortOrder ord, ComparerMode cmod)
+        {
+            _column = col;
+            _order = ord;
+            _mode = cmod;
+        }
+        public ListViewSort()
+        {
+            _column = 0;
+            _order = SortOrder.Ascending;
+            _mode = ComparerMode.String;
+        }
+
+        public int Compare(object x, object y)
+        {
+            int result = 0;
+
+            ListViewItem itemx = (ListViewItem)x;
+            ListViewItem itemy = (ListViewItem)y;
+
+            if (_columnModes != null && _columnModes.Length > _column)
+                _mode = _columnModes[_column];
+
+            switch (_mode)
+            {
+                case ComparerMode.String:
+                    result = string.Compare(itemx.SubItems[_column].Text,
+                        itemy.SubItems[_column].Text);
+                    break;
+                case ComparerMode.Integer:
+                    result = int.Parse(itemx.SubItems[_column].Text) -
+                        int.Parse(itemy.SubItems[_column].Text);
+                    break;
+                case ComparerMode.DateTime:
+                    result = DateTime.Compare(
+                        DateTime.Parse(itemx.SubItems[_column].Text),
+                        DateTime.Parse(itemy.SubItems[_column].Text));
+                    break;
+            }
+
+            if (_order == SortOrder.Descending)
+                result = -result;
+            else if (_order == SortOrder.None)
+                result = 0;
+
+            return result;
         }
     }
 }
