@@ -268,6 +268,10 @@ namespace FolderAnalyzer
             // Search Button
             if (search_text.Length > 0)
             {
+                for (int i = 0; i < listView1.SelectedItems.Count; i++)
+                {
+                    listView1.SelectedItems[i].Selected = false; // Unselect all items
+                }
                 foreach (KeyValuePair<string, int> kvp in m_dict)
                 {
                     if (kvp.Key.Contains(search_text))
@@ -275,7 +279,7 @@ namespace FolderAnalyzer
                         ListViewItem obj = listView1.FindItemWithText(kvp.Key);
                         if (obj != null)
                         {
-                            obj.Selected = true;
+                            obj.Selected = true; // Select a matched item
                             label1.Text = search_text + " found.";
                             found = true;
                         }
