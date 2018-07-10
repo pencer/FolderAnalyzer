@@ -317,6 +317,7 @@ namespace FolderAnalyzer
             {
                 label1.Text = "focused";
                 textBox1.Focus();
+                textBox1.SelectAll();
             }
         }
 
