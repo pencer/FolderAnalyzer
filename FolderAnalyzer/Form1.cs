@@ -83,12 +83,15 @@ namespace FolderAnalyzer
 
             // Receive children's key event.
             this.KeyPreview = true;
+
+            label1.Text = "Loading...";
+            label2.Text = "";
         }
 
         public void MyCallback(object sender, EventArgs e)
         {
             m_elapsed += m_interval;
-            label2.Text = m_elapsed.ToString();
+            label2.Text = (m_elapsed/1000).ToString();
 
             string paths = "";
 
