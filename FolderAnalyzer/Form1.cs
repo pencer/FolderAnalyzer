@@ -22,6 +22,8 @@ namespace FolderAnalyzer
         private int m_interval = 1000; // ms
         private bool m_bLogging = true; // logging or not
 
+        const int COL_INDEX_MATCHED = 2; // Index of column "Matched"
+
         private int m_elapsed = 0;
 
         private string m_curpaths; // currently opened paths in explorer windows
@@ -42,15 +44,18 @@ namespace FolderAnalyzer
         {
             int colwidth0 = 500;
             int colwidth1 = 100;
+            int colwidth2 = 20;
             if (listView1.Columns.Count > 0)
             {
                 colwidth0 = listView1.Columns[0].Width;
                 colwidth1 = listView1.Columns[1].Width;
+                colwidth2 = listView1.Columns[2].Width;
             }   
             listView1.Clear();
             listView1.View = View.Details;
             listView1.Columns.Add("Path", colwidth0);
             listView1.Columns.Add("Value", colwidth1);
+            listView1.Columns.Add("Match", colwidth2);
             listView1.FullRowSelect = true;
             listView1.GridLines = true;
             lvsort = new ListViewSort();
@@ -137,7 +142,7 @@ namespace FolderAnalyzer
                     IOrderedEnumerable<KeyValuePair<string, int>> sorted = m_dict.OrderByDescending(pair => pair.Value);
                     foreach (KeyValuePair<string, int> pair in sorted)
                     {
-                        string[] newitem = { pair.Key, pair.Value.ToString() };
+                        string[] newitem = { pair.Key, pair.Value.ToString(), "" };
                         listView1.Items.Add(new ListViewItem(newitem));
                     }
                 }
@@ -270,6 +275,7 @@ namespace FolderAnalyzer
             {
                 for (int i = 0; i < listView1.SelectedItems.Count; i++)
                 {
+                    listView1.SelectedItems[i].SubItems[COL_INDEX_MATCHED].Text = "";
                     listView1.SelectedItems[i].Selected = false; // Unselect all items
                 }
                 foreach (KeyValuePair<string, int> kvp in m_dict)
@@ -280,6 +286,7 @@ namespace FolderAnalyzer
                         if (obj != null)
                         {
                             obj.Selected = true; // Select a matched item
+                            obj.SubItems[COL_INDEX_MATCHED].Text = "X";
                             label1.Text = search_text + " found.";
                             found = true;
                         }
@@ -311,6 +318,11 @@ namespace FolderAnalyzer
                 label1.Text = "focused";
                 textBox1.Focus();
             }
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 
