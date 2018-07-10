@@ -62,7 +62,8 @@ namespace FolderAnalyzer
             lvsort.ColumnModes = new ListViewSort.ComparerMode[]
             {
                 ListViewSort.ComparerMode.String,
-                ListViewSort.ComparerMode.Integer
+                ListViewSort.ComparerMode.Integer,
+                ListViewSort.ComparerMode.String
             };
             listView1.ListViewItemSorter = lvsort;
 
@@ -276,7 +277,11 @@ namespace FolderAnalyzer
                 for (int i = 0; i < listView1.SelectedItems.Count; i++)
                 {
                     listView1.SelectedItems[i].SubItems[COL_INDEX_MATCHED].Text = "";
-                    listView1.SelectedItems[i].Selected = false; // Unselect all items
+                }
+                listView1.SelectedItems.Clear();
+                for (int i = 0; i < listView1.SelectedItems.Count; i++)
+                {
+                    //listView1.SelectedItems[i].Selected = false; // Unselect all items
                 }
                 foreach (KeyValuePair<string, int> kvp in m_dict)
                 {
@@ -295,6 +300,9 @@ namespace FolderAnalyzer
             }
             if (found)
             {
+                lvsort.Column = COL_INDEX_MATCHED;
+                listView1.Sorting = SortOrder.Ascending;
+                listView1.Sort();
                 listView1.Focus();
             }
             else
