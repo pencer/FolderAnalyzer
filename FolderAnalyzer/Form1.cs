@@ -143,12 +143,14 @@ namespace FolderAnalyzer
                     m_curpaths = paths;
 
                     ListView1_initialize();
+                    listView1.BeginUpdate();
                     IOrderedEnumerable<KeyValuePair<string, int>> sorted = m_dict.OrderByDescending(pair => pair.Value);
                     foreach (KeyValuePair<string, int> pair in sorted)
                     {
                         string[] newitem = { pair.Key, pair.Value.ToString(), "" };
                         listView1.Items.Add(new ListViewItem(newitem));
                     }
+                    listView1.EndUpdate();
                 }
 
                 foreach (string key in keylist)
