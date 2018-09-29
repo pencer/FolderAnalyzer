@@ -279,9 +279,9 @@ namespace FolderAnalyzer
             // Search Button
             if (search_text.Length > 0)
             {
-                for (int i = 0; i < listView1.SelectedItems.Count; i++)
+                for (int i = 0; i < listView1.Items.Count; i++)
                 {
-                    listView1.SelectedItems[i].SubItems[COL_INDEX_MATCHED].Text = "";
+                    listView1.Items[i].SubItems[COL_INDEX_MATCHED].Text = "";
                 }
                 listView1.SelectedItems.Clear();
                 for (int i = 0; i < listView1.SelectedItems.Count; i++)
@@ -306,7 +306,7 @@ namespace FolderAnalyzer
             if (found)
             {
                 lvsort.Column = COL_INDEX_MATCHED;
-                listView1.Sorting = SortOrder.Ascending;
+                lvsort.Order = SortOrder.Descending;
                 listView1.Sort();
                 listView1.Focus();
             }
@@ -360,7 +360,18 @@ namespace FolderAnalyzer
                 _columnModes = value;
             }
         }
-
+        
+        public SortOrder Order
+        {
+            set
+            {
+                _order = value;
+            }
+            get
+            {
+                return _order;
+            }
+        }
         public int Column
         {
             set
