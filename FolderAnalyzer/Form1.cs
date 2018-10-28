@@ -143,6 +143,7 @@ namespace FolderAnalyzer
                         // not registered folder
                         newitemfound = true;
                         m_dict[str] = 1;
+                        label1.Text = "Updated: " + str;
                     }
                     m_curPaths[str] = true;
                     paths += str;
@@ -153,7 +154,7 @@ namespace FolderAnalyzer
                 if (newitemfound || listView1.Items.Count == 0)
                 {
                     // update
-                    label1.Text = "Updated";
+                    //label1.Text = "Updated";
                     m_curpaths = paths;
 
                     UpdateListView1();
