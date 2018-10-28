@@ -88,6 +88,19 @@ namespace FolderAnalyzer
             label2.Text = "";
         }
 
+        private void UpdateListView1()
+        {
+            ListView1_initialize();
+            listView1.BeginUpdate();
+            IOrderedEnumerable<KeyValuePair<string, int>> sorted = m_dict.OrderByDescending(pair => pair.Value);
+            foreach (KeyValuePair<string, int> pair in sorted)
+            {
+                string[] newitem = { pair.Key, pair.Value.ToString(), "" };
+                listView1.Items.Add(new ListViewItem(newitem));
+            }
+            listView1.EndUpdate();
+        }
+
         public void MyCallback(object sender, EventArgs e)
         {
             m_elapsed += m_interval;
@@ -142,15 +155,7 @@ namespace FolderAnalyzer
                     label1.Text = "Updated";
                     m_curpaths = paths;
 
-                    ListView1_initialize();
-                    listView1.BeginUpdate();
-                    IOrderedEnumerable<KeyValuePair<string, int>> sorted = m_dict.OrderByDescending(pair => pair.Value);
-                    foreach (KeyValuePair<string, int> pair in sorted)
-                    {
-                        string[] newitem = { pair.Key, pair.Value.ToString(), "" };
-                        listView1.Items.Add(new ListViewItem(newitem));
-                    }
-                    listView1.EndUpdate();
+                    UpdateListView1();
                 }
 
                 foreach (string key in keylist)
@@ -337,6 +342,35 @@ namespace FolderAnalyzer
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void DeleteAuto()
+        {
+            List<String> todel = new List<string>();
+            String tobedeleted = "Delete from the folder log:\n";
+            foreach (KeyValuePair<string, int> kvp in m_dict)
+            {
+                String pathname = kvp.Key.Remove(0, "file:///".Length).Replace('/','\\').Replace("%20"," ");
+                if (false == System.IO.Directory.Exists(pathname))
+                {
+                    // not exist
+                    tobedeleted += pathname + "\n";
+                    todel.Add(kvp.Key);
+                }
+            }
+            DialogResult res = MessageBox.Show(tobedeleted, "Delete from folder log", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+            if (res == DialogResult.OK) {
+                foreach (var item in todel)
+                {
+                    m_dict.Remove(item);
+                }
+                UpdateListView1();
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            DeleteAuto();
         }
     }
 
