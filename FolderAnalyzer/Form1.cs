@@ -103,6 +103,7 @@ namespace FolderAnalyzer
 
         public void MyCallback(object sender, EventArgs e)
         {
+            m_timer.Stop();
             m_elapsed += m_interval;
             label2.Text = (m_elapsed/1000).ToString();
 
@@ -170,7 +171,7 @@ namespace FolderAnalyzer
             {
                 label1.Text = "Skip";
             }
-
+            m_timer.Start();
         }
 
         private void button1_Click(object sender, EventArgs e)
