@@ -42,7 +42,7 @@ namespace FolderAnalyzer
 
         private void ListView1_initialize()
         {
-            int colwidth0 = 500;
+            int colwidth0 = -2;// 500;
             int colwidth1 = 100;
             int colwidth2 = 20;
             if (listView1.Columns.Count > 0)
@@ -268,7 +268,7 @@ namespace FolderAnalyzer
             }
             if (e.KeyCode == Keys.D && e.Alt)
             {
-                DeleteSingle();
+                DeleteSelected();
             }
         }
 
@@ -350,7 +350,7 @@ namespace FolderAnalyzer
 
         }
 
-        private void DeleteSingle()
+        private void DeleteSelected()
         {
             if (listView1.SelectedItems.Count > 0)
             {
@@ -404,7 +404,7 @@ namespace FolderAnalyzer
                     if (obj != null)
                     {
                         obj.Selected = true; // Select a matched item
-                        obj.SubItems[COL_INDEX_MATCHED].Text = "X";
+                        obj.SubItems[COL_INDEX_MATCHED].Text = "Not Exist";
                         found = true;
                     }
                 }
@@ -425,7 +425,7 @@ namespace FolderAnalyzer
 
         private void button5_Click(object sender, EventArgs e)
         {
-            DeleteSingle();
+            DeleteSelected();
         }
     }
 
