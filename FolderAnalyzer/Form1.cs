@@ -354,10 +354,10 @@ namespace FolderAnalyzer
         {
             if (listView1.SelectedItems.Count > 0)
             {
-                String target = "Delete items?";
+                String target = "Delete items? (Yes/No)\n";
                 for (int i = 0; i < listView1.SelectedItems.Count; i++)
                 {
-                    target += listView1.SelectedItems[i].SubItems[0].Text + "\n";
+                    target += "  " + listView1.SelectedItems[i].SubItems[0].Text + "\n";
                 }
                 DialogResult res = MessageBox.Show(target, "Delete from folder log", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
                 if (res == DialogResult.Yes)
@@ -372,8 +372,15 @@ namespace FolderAnalyzer
 
         }
 
-        private void DeleteAuto()
+        private void CheckExist()
         {
+            for (int i = 0; i < listView1.Items.Count; i++)
+            {
+                listView1.Items[i].SubItems[COL_INDEX_MATCHED].Text = "";
+            }
+            listView1.SelectedItems.Clear();
+            bool found = false;
+
             List<String> todel = new List<string>();
             String tobedeleted = "Delete from the folder log:\n";
             foreach (KeyValuePair<string, int> kvp in m_dict)
@@ -393,21 +400,32 @@ namespace FolderAnalyzer
                     // not exist
                     tobedeleted += pathname + "\n";
                     todel.Add(kvp.Key);
+                    ListViewItem obj = listView1.FindItemWithText(kvp.Key);
+                    if (obj != null)
+                    {
+                        obj.Selected = true; // Select a matched item
+                        obj.SubItems[COL_INDEX_MATCHED].Text = "X";
+                        found = true;
+                    }
                 }
             }
-            DialogResult res = MessageBox.Show(tobedeleted, "Delete from folder log", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
-            if (res == DialogResult.OK) {
-                foreach (var item in todel)
-                {
-                    m_dict.Remove(item);
-                }
-                UpdateListView1();
+            if (found)
+            {
+                lvsort.Column = COL_INDEX_MATCHED;
+                lvsort.Order = SortOrder.Descending;
+                listView1.Sort();
+                listView1.Focus();
             }
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            DeleteAuto();
+            CheckExist();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            DeleteSingle();
         }
     }
 

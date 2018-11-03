@@ -37,14 +37,15 @@
             this.button3 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(784, 15);
+            this.button1.Location = new System.Drawing.Point(837, 16);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(85, 32);
+            this.button1.Size = new System.Drawing.Size(62, 32);
             this.button1.TabIndex = 7;
             this.button1.Text = "Sa&ve";
             this.button1.UseVisualStyleBackColor = true;
@@ -74,9 +75,9 @@
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button2.Cursor = System.Windows.Forms.Cursors.Default;
-            this.button2.Location = new System.Drawing.Point(875, 15);
+            this.button2.Location = new System.Drawing.Point(905, 15);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(118, 34);
+            this.button2.Size = new System.Drawing.Size(88, 34);
             this.button2.TabIndex = 2;
             this.button2.Text = "&Open";
             this.button2.UseVisualStyleBackColor = true;
@@ -129,17 +130,29 @@
             this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button4.Location = new System.Drawing.Point(709, 15);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 33);
+            this.button4.Size = new System.Drawing.Size(57, 33);
             this.button4.TabIndex = 8;
-            this.button4.Text = "Delete Auto";
+            this.button4.Text = "Check";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // button5
+            // 
+            this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button5.Location = new System.Drawing.Point(772, 16);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(59, 33);
+            this.button5.TabIndex = 8;
+            this.button5.Text = "&Delete";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1015, 693);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button3);
@@ -170,6 +183,7 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button5;
     }
 }
 
