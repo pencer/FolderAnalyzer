@@ -266,6 +266,10 @@ namespace FolderAnalyzer
             {
                 OpenExplorer();
             }
+            if (e.KeyCode == Keys.D && e.Alt)
+            {
+                DeleteSingle();
+            }
         }
 
         private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -346,14 +350,45 @@ namespace FolderAnalyzer
 
         }
 
+        private void DeleteSingle()
+        {
+            if (listView1.SelectedItems.Count > 0)
+            {
+                String target = "Delete items?";
+                for (int i = 0; i < listView1.SelectedItems.Count; i++)
+                {
+                    target += listView1.SelectedItems[i].SubItems[0].Text + "\n";
+                }
+                DialogResult res = MessageBox.Show(target, "Delete from folder log", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+                if (res == DialogResult.Yes)
+                {
+                    for (int i = 0; i < listView1.SelectedItems.Count; i++)
+                    {
+                        m_dict.Remove(listView1.SelectedItems[i].SubItems[0].Text);
+                    }
+                    UpdateListView1();
+                }
+            }
+
+        }
+
         private void DeleteAuto()
         {
             List<String> todel = new List<string>();
             String tobedeleted = "Delete from the folder log:\n";
             foreach (KeyValuePair<string, int> kvp in m_dict)
             {
-                String pathname = kvp.Key.Remove(0, "file:///".Length).Replace('/','\\').Replace("%20"," ");
-                if (false == System.IO.Directory.Exists(pathname))
+                String pathname = "";
+                if (kvp.Key.StartsWith("file:///"))
+                {
+                    pathname = kvp.Key.Remove(0, "file:///".Length);
+                }
+                else if (kvp.Key.StartsWith("file:"))
+                {
+                    pathname = kvp.Key.Remove(0, "file:".Length);
+                }
+                pathname = pathname.Replace('/','\\').Replace("%20"," ");
+                if (pathname.Length > 0 && false == System.IO.Directory.Exists(pathname))
                 {
                     // not exist
                     tobedeleted += pathname + "\n";
