@@ -125,6 +125,7 @@ namespace FolderAnalyzer
                 if (Path.GetFileName(web.FullName).ToUpper() == "EXPLORER.EXE")
                 {
                     string str = web.LocationURL;
+                    if (str.Length == 0) { continue; } // LocationURL is empty for special folders (ex. Documents)
                     if (m_dict.ContainsKey(str))
                     {
                         if (!m_curPaths.ContainsKey(str))
