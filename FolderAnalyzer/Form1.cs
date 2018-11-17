@@ -122,32 +122,39 @@ namespace FolderAnalyzer
             ShellWindows win = shell.Windows();
             foreach (IWebBrowser2 web in win)
             {
-                if (Path.GetFileName(web.FullName).ToUpper() == "EXPLORER.EXE")
+                try
                 {
-                    string str = web.LocationURL;
-                    if (str.Length == 0) { continue; } // LocationURL is empty for special folders (ex. Documents)
-                    if (m_dict.ContainsKey(str))
+                    if (Path.GetFileName(web.FullName).ToUpper() == "EXPLORER.EXE")
                     {
-                        if (!m_curPaths.ContainsKey(str))
+                        string str = web.LocationURL;
+                        if (str.Length == 0) { continue; } // LocationURL is empty for special folders (ex. Documents)
+                        if (m_dict.ContainsKey(str))
                         {
-                            // an already registered folder is opened
-                            m_dict[str] += 1;
-                            ListViewItem obj = listView1.FindItemWithText(str);
-                            if (obj != null)
+                            if (!m_curPaths.ContainsKey(str))
                             {
-                                obj.SubItems[1].Text = (int.Parse(obj.SubItems[1].Text) + 1).ToString();
+                                // an already registered folder is opened
+                                m_dict[str] += 1;
+                                ListViewItem obj = listView1.FindItemWithText(str);
+                                if (obj != null)
+                                {
+                                    obj.SubItems[1].Text = (int.Parse(obj.SubItems[1].Text) + 1).ToString();
+                                }
                             }
                         }
+                        else
+                        {
+                            // not registered folder
+                            newitemfound = true;
+                            m_dict[str] = 1;
+                            label1.Text = "Updated: " + str;
+                        }
+                        m_curPaths[str] = true;
+                        paths += str;
                     }
-                    else
-                    {
-                        // not registered folder
-                        newitemfound = true;
-                        m_dict[str] = 1;
-                        label1.Text = "Updated: " + str;
-                    }
-                    m_curPaths[str] = true;
-                    paths += str;
+                }
+                catch (Exception ex)
+                {
+                    // Skip this window if something is wrong
                 }
             }
             if (!paths.Equals(m_curpaths))
@@ -253,7 +260,7 @@ namespace FolderAnalyzer
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            SaveData(Application.UserAppDataPath + setting_filename);
+            //SaveData(Application.UserAppDataPath + setting_filename);
         }
 
         private void label2_Click(object sender, EventArgs e)
