@@ -118,5 +118,18 @@ namespace FolderAnalyzer
         {
             EnumerateWindows();
         }
+
+        private void listView1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Return)
+            {
+                OpenExplorer();
+            }
+        }
+
+        private void Form2_KeyDown(object sender, KeyEventArgs e)
+        {
+
+        }
     }
 }
