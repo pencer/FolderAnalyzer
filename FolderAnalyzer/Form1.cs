@@ -351,6 +351,11 @@ namespace FolderAnalyzer
                 textBox1.Focus();
                 textBox1.SelectAll();
             }
+            if ((e.KeyData == Keys.F9))
+            {
+                Form2 form = new Form2();
+                form.ShowDialog();
+            }
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
