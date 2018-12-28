@@ -260,7 +260,7 @@ namespace FolderAnalyzer
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //SaveData(Application.UserAppDataPath + setting_filename);
+            SaveData(Application.UserAppDataPath + setting_filename);
         }
 
         private void label2_Click(object sender, EventArgs e)
