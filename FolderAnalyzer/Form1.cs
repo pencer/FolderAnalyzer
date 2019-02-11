@@ -103,6 +103,8 @@ namespace FolderAnalyzer
 
         public void MyCallback(object sender, EventArgs e)
         {
+            var sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
             m_timer.Stop();
             m_elapsed += m_interval;
             label2.Text = (m_elapsed/1000).ToString();
@@ -180,6 +182,8 @@ namespace FolderAnalyzer
             {
                 label1.Text = "Skip";
             }
+            sw.Stop();
+            label1.Text += $" ({sw.ElapsedMilliseconds}ms)";
             m_timer.Start();
         }
 
