@@ -136,5 +136,10 @@ namespace FolderAnalyzer
         {
             EnumerateWindows();
         }
+
+        private void listView1_DoubleClick(object sender, EventArgs e)
+        {
+            OpenExplorer();
+        }
     }
 }
