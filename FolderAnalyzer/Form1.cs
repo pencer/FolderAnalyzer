@@ -18,6 +18,26 @@ namespace FolderAnalyzer
 {
     public partial class Form1 : Form
     {
+        class FolderInfo
+        {
+            public int access_count;
+            public DateTime last_access;
+            public FolderInfo()
+            {
+                access_count = 0;
+                last_access = DateTime.Now;
+            }
+            public FolderInfo(int acc_cnt)
+            {
+                access_count = acc_cnt;
+                last_access = DateTime.Now;
+            }
+            public FolderInfo(int acc_cnt, DateTime date)
+            {
+                access_count = acc_cnt;
+                last_access = date;
+            }
+        }
         private Timer m_timer = new Timer();
         private int m_interval = 1000; // ms
         private bool m_bLogging = true; // logging or not
@@ -28,7 +48,7 @@ namespace FolderAnalyzer
 
         private string m_curpaths; // currently opened paths in explorer windows
 
-        private Dictionary<string, int> m_dict = new Dictionary<string, int>();
+        private Dictionary<string, FolderInfo> m_dict = new Dictionary<string, FolderInfo>();
         private Dictionary<string, bool> m_curPaths = new Dictionary<string, bool>();
 
         private string setting_filename = "folder_log.txt";
@@ -44,18 +64,21 @@ namespace FolderAnalyzer
         {
             int colwidth0 = -2;// 500;
             int colwidth1 = 100;
-            int colwidth2 = 20;
+            int colwidth2 = 50;
+            int colwidth3 = 20;
             if (listView1.Columns.Count > 0)
             {
                 colwidth0 = listView1.Columns[0].Width;
                 colwidth1 = listView1.Columns[1].Width;
                 colwidth2 = listView1.Columns[2].Width;
+                colwidth3 = listView1.Columns[3].Width;
             }   
             listView1.Clear();
             listView1.View = View.Details;
             listView1.Columns.Add("Path", colwidth0);
             listView1.Columns.Add("Value", colwidth1);
-            listView1.Columns.Add("Match", colwidth2);
+            listView1.Columns.Add("Last Access", colwidth2);
+            listView1.Columns.Add("Match", colwidth3);
             listView1.FullRowSelect = true;
             listView1.GridLines = true;
             lvsort = new ListViewSort();
@@ -63,6 +86,7 @@ namespace FolderAnalyzer
             {
                 ListViewSort.ComparerMode.String,
                 ListViewSort.ComparerMode.Integer,
+                ListViewSort.ComparerMode.String,
                 ListViewSort.ComparerMode.String
             };
             listView1.ListViewItemSorter = lvsort;
@@ -92,10 +116,10 @@ namespace FolderAnalyzer
         {
             ListView1_initialize();
             listView1.BeginUpdate();
-            IOrderedEnumerable<KeyValuePair<string, int>> sorted = m_dict.OrderByDescending(pair => pair.Value);
-            foreach (KeyValuePair<string, int> pair in sorted)
+            IOrderedEnumerable<KeyValuePair<string, FolderInfo>> sorted = m_dict.OrderByDescending(pair => pair.Value.access_count);
+            foreach (KeyValuePair<string, FolderInfo> pair in sorted)
             {
-                string[] newitem = { pair.Key, pair.Value.ToString(), "" };
+                string[] newitem = { pair.Key, pair.Value.access_count.ToString(), pair.Value.last_access.ToString(), "" };
                 listView1.Items.Add(new ListViewItem(newitem));
             }
             listView1.EndUpdate();
@@ -135,11 +159,13 @@ namespace FolderAnalyzer
                             if (!m_curPaths.ContainsKey(str))
                             {
                                 // an already registered folder is opened
-                                m_dict[str] += 1;
+                                m_dict[str].access_count += 1;
+                                m_dict[str].last_access = DateTime.Now;
                                 ListViewItem obj = listView1.FindItemWithText(str);
                                 if (obj != null)
                                 {
                                     obj.SubItems[1].Text = (int.Parse(obj.SubItems[1].Text) + 1).ToString();
+                                    obj.SubItems[2].Text = m_dict[str].last_access.ToString();
                                 }
                             }
                         }
@@ -147,7 +173,8 @@ namespace FolderAnalyzer
                         {
                             // not registered folder
                             newitemfound = true;
-                            m_dict[str] = 1;
+                            //m_dict[str].access_count = 1;
+                            m_dict[str] = new FolderInfo(1);
                             label1.Text = "Updated: " + str;
                         }
                         m_curPaths[str] = true;
@@ -183,7 +210,7 @@ namespace FolderAnalyzer
                 label1.Text = "Skip";
             }
             sw.Stop();
-            label1.Text += $" ({sw.ElapsedMilliseconds}ms)";
+            label1.Text += " ({sw.ElapsedMilliseconds}ms)";
             m_timer.Start();
         }
 
@@ -210,8 +237,10 @@ namespace FolderAnalyzer
                 string path = listView1.SelectedItems[0].SubItems[0].Text;
                 int val = int.Parse(listView1.SelectedItems[0].SubItems[1].Text);
                 val++;
-                m_dict[path]++;
+                m_dict[path].access_count++;
+                m_dict[path].last_access = DateTime.Now;
                 listView1.SelectedItems[0].SubItems[1].Text = val.ToString();
+                listView1.SelectedItems[0].SubItems[2].Text = m_dict[path].last_access.ToString();
                 System.Diagnostics.Process.Start("EXPLORER.EXE", path);
             }
         }
@@ -219,12 +248,12 @@ namespace FolderAnalyzer
         private void SaveData(string filename)
         {
             StreamWriter sw = new StreamWriter(filename, false, Encoding.GetEncoding("Shift_JIS"));
-            IOrderedEnumerable<KeyValuePair<string, int>> sorted = m_dict.OrderByDescending(pair => pair.Value);
-            foreach (KeyValuePair<string, int> pair in sorted/*m_dict*/)
+            IOrderedEnumerable<KeyValuePair<string, FolderInfo>> sorted = m_dict.OrderByDescending(pair => pair.Value.access_count);
+            foreach (KeyValuePair<string, FolderInfo> pair in sorted/*m_dict*/)
             {
                 if (pair.Key.Length > 0)
                 {
-                    sw.WriteLine(pair.Key + "\t" + pair.Value/* + sw.NewLine*/);
+                    sw.WriteLine(pair.Key + "\t" + pair.Value.access_count + "\t" + pair.Value.last_access/* + sw.NewLine*/);
                 }
             }
             sw.Close();
@@ -252,11 +281,16 @@ namespace FolderAnalyzer
                 string[] delimiter = { "\t" };
                 string[] sttmp = line.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
                 string key = sttmp[0];
-                int value = int.Parse(sttmp[1]);
+                int acc_cnt = int.Parse(sttmp[1]);
+                DateTime last_acc = DateTime.Now;
+                if (sttmp.Length >= 3)
+                {
+                    last_acc = DateTime.Parse(sttmp[2]);
+                }
                 if (key.Length > 0)
                 {
-                    m_dict[key] = value;
-
+                    //m_dict[key].access_count = value;
+                    m_dict[key] = new FolderInfo(acc_cnt, last_acc);
                 }
             }
             sr.Close();
@@ -311,7 +345,7 @@ namespace FolderAnalyzer
                 {
                     //listView1.SelectedItems[i].Selected = false; // Unselect all items
                 }
-                foreach (KeyValuePair<string, int> kvp in m_dict)
+                foreach (KeyValuePair<string, FolderInfo> kvp in m_dict)
                 {
                     if (kvp.Key.Contains(search_text))
                     {
@@ -400,7 +434,7 @@ namespace FolderAnalyzer
 
             List<String> todel = new List<string>();
             String tobedeleted = "Delete from the folder log:\n";
-            foreach (KeyValuePair<string, int> kvp in m_dict)
+            foreach (KeyValuePair<string, FolderInfo> kvp in m_dict)
             {
                 String pathname = "";
                 if (kvp.Key.StartsWith("file:///"))
