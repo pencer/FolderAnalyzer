@@ -24,7 +24,7 @@ namespace FolderAnalyzer
             public DateTime last_access;
             public FolderInfo()
             {
-                access_count = 0;
+                access_count = 1;
                 last_access = DateTime.Now;
             }
             public FolderInfo(int acc_cnt)
@@ -164,7 +164,7 @@ namespace FolderAnalyzer
                                 ListViewItem obj = listView1.FindItemWithText(str);
                                 if (obj != null)
                                 {
-                                    obj.SubItems[1].Text = (int.Parse(obj.SubItems[1].Text) + 1).ToString();
+                                    obj.SubItems[1].Text = m_dict[str].access_count.ToString();
                                     obj.SubItems[2].Text = m_dict[str].last_access.ToString();
                                 }
                             }
@@ -173,8 +173,7 @@ namespace FolderAnalyzer
                         {
                             // not registered folder
                             newitemfound = true;
-                            //m_dict[str].access_count = 1;
-                            m_dict[str] = new FolderInfo(1);
+                            m_dict[str] = new FolderInfo();
                             label1.Text = "Updated: " + str;
                         }
                         m_curPaths[str] = true;
@@ -239,7 +238,7 @@ namespace FolderAnalyzer
                 val++;
                 m_dict[path].access_count++;
                 m_dict[path].last_access = DateTime.Now;
-                listView1.SelectedItems[0].SubItems[1].Text = val.ToString();
+                listView1.SelectedItems[0].SubItems[1].Text = m_dict[path].access_count.ToString();
                 listView1.SelectedItems[0].SubItems[2].Text = m_dict[path].last_access.ToString();
                 System.Diagnostics.Process.Start("EXPLORER.EXE", path);
             }
@@ -289,7 +288,6 @@ namespace FolderAnalyzer
                 }
                 if (key.Length > 0)
                 {
-                    //m_dict[key].access_count = value;
                     m_dict[key] = new FolderInfo(acc_cnt, last_acc);
                 }
             }
