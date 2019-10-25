@@ -42,7 +42,7 @@ namespace FolderAnalyzer
         private int m_interval = 1000; // ms
         private bool m_bLogging = true; // logging or not
 
-        const int COL_INDEX_MATCHED = 2; // Index of column "Matched"
+        const int COL_INDEX_MATCHED = 3; // Index of column "Matched"
 
         private int m_elapsed = 0;
 
@@ -63,8 +63,8 @@ namespace FolderAnalyzer
         private void ListView1_initialize()
         {
             int colwidth0 = -2;// 500;
-            int colwidth1 = 100;
-            int colwidth2 = 50;
+            int colwidth1 = 50;
+            int colwidth2 = 120;
             int colwidth3 = 20;
             if (listView1.Columns.Count > 0)
             {
@@ -127,8 +127,8 @@ namespace FolderAnalyzer
 
         public void MyCallback(object sender, EventArgs e)
         {
-            var sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
+            //var sw = new System.Diagnostics.Stopwatch();
+            //sw.Start();
             m_timer.Stop();
             m_elapsed += m_interval;
             label2.Text = (m_elapsed/1000).ToString();
@@ -208,8 +208,8 @@ namespace FolderAnalyzer
             {
                 label1.Text = "Skip";
             }
-            sw.Stop();
-            label1.Text += " ({sw.ElapsedMilliseconds}ms)";
+            //sw.Stop();
+            //label1.Text += " ({sw.ElapsedMilliseconds}ms)";
             m_timer.Start();
         }
 
