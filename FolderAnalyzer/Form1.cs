@@ -244,6 +244,15 @@ namespace FolderAnalyzer
             }
         }
 
+        private void CopySelectedItem()
+        {
+            if (listView1.SelectedItems.Count > 0)
+            {
+                string path = listView1.SelectedItems[0].SubItems[0].Text;
+                Clipboard.SetDataObject(path, true);
+            }
+        }
+
         private void SaveData(string filename)
         {
             StreamWriter sw = new StreamWriter(filename, false, Encoding.GetEncoding("Shift_JIS"));
@@ -391,6 +400,10 @@ namespace FolderAnalyzer
             {
                 Form2 form = new Form2();
                 form.ShowDialog();
+            }
+            if ((e.KeyCode == Keys.C) && (e.Control))
+            {
+                CopySelectedItem();
             }
         }
 

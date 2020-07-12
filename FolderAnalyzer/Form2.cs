@@ -82,6 +82,15 @@ namespace FolderAnalyzer
             }
         }
 
+        private void CopySelectedItem()
+        {
+            if (listView1.SelectedItems.Count > 0)
+            {
+                string path = listView1.SelectedItems[0].SubItems[0].Text;
+                Clipboard.SetDataObject(path, true);
+            }
+        }
+
         public void EnumerateWindows()
         {
             ListView1_initialize();
@@ -125,11 +134,14 @@ namespace FolderAnalyzer
             {
                 OpenExplorer();
             }
+            if ((e.KeyCode == Keys.C) && (e.Control))
+            {
+                CopySelectedItem();
+            }
         }
 
         private void Form2_KeyDown(object sender, KeyEventArgs e)
         {
-
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -140,6 +152,11 @@ namespace FolderAnalyzer
         private void listView1_DoubleClick(object sender, EventArgs e)
         {
             OpenExplorer();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            CopySelectedItem();
         }
     }
 }
